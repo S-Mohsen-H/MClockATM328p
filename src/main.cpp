@@ -1,158 +1,199 @@
 #include "General.h"
-// #include "usart.h"
-#include "avr/interrupt.h"
-// int main()
+
+alarm_t alarm1;
+
+char outputBuffer[0X100];
+// char *inputBuffer = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+uint8_t inputBufferIndex = 0;
+char str[2][17];
+// int main(void)
 // {
-//   DDRB = 1 << PB0;
+//   UART_init();
+//   SPI_init();
+//   SPI_sendByte(0);
+//   LCD_init();
+//   // LCD_sendByte(COMMAND_CLEAR, COMMAND);
+//   LCD_printStr((char *)"hello", setCo(0, 0));
+//   // LCD_printStr((char *)"line 2  fff fff", setCo(0, 1));
+//   // sei();
+//   uint8_t f = 0;
+//   char *strn = "4";
+//   sei();
 //   while (1)
 //   {
-//     PORTB = 1 << PB0;
-//     _delay_ms(1000);
-//     PORTB = 0;
-//     _delay_ms(500);
+//     // strcpy(outputBuffer, "hello\n\r\n");
+//     // // UART_sendStr("hello PC", sizeof("hello PC"));
+//     // if (UART_sendStr(outputBuffer, 6))
+//     //   LCD_printStr((char *)"ok", setCo(0, 0));
+//     // else
+//     //   LCD_printStr((char *)"nok", setCo(0, 0));
+//     cli();
+//     sprintf(strn, "%d", f);
+//     f = !f;
+//     LCD_printStr(strn, setCo(10, 0));
+//     sei();
+
+//     _delay_ms(2000);
+
+//     cli();
+//     LCD_sendByte(COMMAND_CLEAR, COMMAND);
+//     sei();
 //   }
+
+// I2C_init();
+// }
+// int main(void)
+// {
+//   SPI_init();
 // }
 int main(void)
 {
+
   sei();
   UART_init();
   SPI_init();
   SPI_sendByte(0);
-  _delay_ms(1000);
 
+  _delay_ms(1000);
   LCD_init();
   LCD_sendByte(COMMAND_CLEAR, COMMAND);
-
-  // char str[17];
   LCD_printStr((char *)"hello", setCo(0, 0));
-  LCD_printStr((char *)"hiiiiffffhfff", setCo(0, 1));
-  // uint64_t i = 0;
-  // while (1)
-  // {
-  //   // sprintf(str, "s= %i", i++);
-  //   // LCD_printStr(str, setCo(0, 1));
-  //   // printf("hello\n");
-  //   // _delay_ms(1);
-  //   // PORTB |= 1 << PB0;
-  //   // _delay_ms(500);
-  //   // PORTB &= ~(1 << PB0);
-  //   // _delay_ms(1000);
-  // }
+  LCD_printStr((char *)"line 2  fffhfff", setCo(0, 1));
 
   I2C_init();
-  uint8_t data[100];
-  // printf("\n\n");
-  // while (1)
-  // {
-  //   RTC_getTime(data);
-  //   for (uint8_t i = 0; i < 7; i++)
-  //     data[i] = bcdToBin(data[i]);
 
-  //   RTC_printTime(data);
-  //   // LCD_printStr()
-  //   _delay_ms(10);
-  // };
+  uint8_t data[1000];
+  char str[17];
+  uint8_t i = 0;
+  uint8_t j = 0;
+  I2C_startTransmission(0b1001001, TW_WRITE);
+  I2C_transmit(0xA2);
+  I2C_stopTransmission();
+  // RTC_setTime(binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5));
   while (1)
   {
+
+    sprintf(str, "%d", i++);
+    LCD_printStr(str, setCo(2, 0));
+    // LCD_printStr(str, setCo(0, 0));
+    // I2C_startTransmission(0b1001001, TW_READ);
+
     I2C_startTransmission(0b1001001, TW_READ);
-    // I2C_transmit('C');
-    for (uint8_t i = 0; i < 99; i++)
-    {
-      I2C_receive(data + i, 1);
-    }
-    I2C_receive(data + 99, 0);
-    // I2C_stopTransmission;
+    // printf("c\n");
+    j = 0;
+    for (j = 0; j < 31; j++)
+      I2C_receive(data + j, 1);
+    I2C_receive(data + 30, 0);
+    // I2C_stopTransmission();
     // I2C_transmitString("hello ESP32!\n");
     I2C_stopTransmission();
-    printf((char *)data);
+    // printf((char *)data);
+    LCD_printStr((char *)data, setCo(0, 1));
     _delay_ms(1000);
   }
-
-  // _delay_ms(15);
-  // while (1)
-  // {
-  //   // if (I2C_startTransmission(0b11010000))
-  //   if (I2C_startTransmission(0b11010000))
-  //     LCD_printStr((char *)"1", setCo(0, 0));
-  //   I2C_stopTransmission();
-  //   if (I2C_startTransmission(0b11010001))
-  //     LCD_printStr((char *)"2", setCo(0, 0));
-  //   for (uint8_t i = 0; i < 6; i++)
-  //   {
-  //     I2C_receive(data + i, 1);
-  //   }
-  //   I2C_receive(data + 6, 0);
-  //   I2C_stopTransmission();
-
-  //   printf("%d\n", data[0]);
-  //   _delay_ms(1000);
-  //   // if (I2C_receive(data, 7))
-  //   //   LCD_printStr((char *)"2", setCo(1, 0));
-  //   // char *str2 = NULL;
-  //   // str2 = (char *)malloc(100 * sizeof(char));
-  //   // sprintf(str2, "helloThereESP32&");
-  //   // for (uint8_t i = 0; i++; i < 100 && str2[i] != '&')
-  //   //   if (I2C_transmit(str2[i]) == TW_MT_DATA_ACK)
-  //   //     LCD_printStr((char *)"2", setCo(2, 0));
-
-  //   // if (I2C_stopTransmission())
-  //   //   LCD_printStr((char *)"3", setCo(2, 0));
-
-  //   // blink(100);
-  //   // // sprintf(str, "s:%d,m:%d,h:%d", data[0], data[1], data[2]);
-  //   // LCD_sendByte(COMMAND_CLEAR, COMMAND);
-  //   // LCD_printStr(str, setCo(0, 0));
-
-  //   // _delay_ms(1000);
-  // }
-  // DDRD = 1 << PD7;
-  // UART_init();
-  // SREG |= 1 << SREG_I;
-  // char *str3 = NULL;
-  // str3 = (char *)malloc(20 * sizeof(uint8_t));
-  // // strcpy(str3, "Hello PC\n");
-  // I2C_init();
-  // uint64_t j = 0;
-
-  // while (1)
-  // {
-  //   if (I2C_startTransmission(0b11010000))
-  //     UART_sendStr("started\n");
-  //   if (I2C_transmit(0))
-  //     UART_sendStr("transmitted 0\n");
-
-  //   I2C_stopTransmission();
-  //   UART_sendStr("stopped\n");
-
-  //   if (I2C_startTransmission(0b11010000))
-  //     UART_sendStr("started 2\n");
-  //   if (I2C_receive(data, 7))
-  //     UART_sendStr("received\n");
-
-  //   I2C_stopTransmission();
-  //   for (uint8_t i = 0; i < 7; i++)
-  //   {
-  //     sprintf(str3, "Register: %d = %d\r\n", i, data[i]);
-  //     UART_sendStr(str3);
-  //   }
-  //   // if (a)
-  //   //   PORTD &= ~(1 << PD7);
-  //   // else
-  //   //   PORTD |= 1 << PD7;
-  //   // a = !a;
-  //   // sprintf(str3, "%d\r\n", j++);
-  //   // for (uint8_t i = 0; str3[i] != 0; i++)
-  //   // {
-  //   //   UART_sendByte(str3[i]);
-  //   // }
-  //   _delay_ms(1000);
-  // }
 }
-// uint8_t a = 0;
+//   // _delay_ms(15);
+//   // while (1)
+//   // {
+//   //   // if (I2C_startTransmission(0b11010000))
+//   //   if (I2C_startTransmission(0b11010000))
+//   //     LCD_printStr((char *)"1", setCo(0, 0));
+//   //   I2C_stopTransmission();
+//   //   if (I2C_startTransmission(0b11010001))
+//   //     LCD_printStr((char *)"2", setCo(0, 0));
+//   //   for (uint8_t i = 0; i < 6; i++)
+//   //   {
+//   //     I2C_receive(data + i, 1);
+//   //   }
+//   //   I2C_receive(data + 6, 0);
+//   //   I2C_stopTransmission();
 
+//   //   printf("%d\n", data[0]);
+//   //   _delay_ms(1000);
+//   //   // if (I2C_receive(data, 7))
+//   //   //   LCD_printStr((char *)"2", setCo(1, 0));
+//   //   // char *str2 = NULL;
+//   //   // str2 = (char *)malloc(100 * sizeof(char));
+//   //   // sprintf(str2, "helloThereESP32&");
+//   //   // for (uint8_t i = 0; i++; i < 100 && str2[i] != '&')
+//   //   //   if (I2C_transmit(str2[i]) == TW_MT_DATA_ACK)
+//   //   //     LCD_printStr((char *)"2", setCo(2, 0));
+
+//   //   // if (I2C_stopTransmission())
+//   //   //   LCD_printStr((char *)"3", setCo(2, 0));
+
+//   //   // blink(100);
+//   //   // // sprintf(str, "s:%d,m:%d,h:%d", data[0], data[1], data[2]);
+//   //   // LCD_sendByte(COMMAND_CLEAR, COMMAND);
+//   //   // LCD_printStr(str, setCo(0, 0));
+
+//   //   // _delay_ms(1000);
+//   // }
+//   // DDRD = 1 << PD7;
+//   // UART_init();
+//   // SREG |= 1 << SREG_I;
+//   // char *str3 = NULL;
+//   // str3 = (char *)malloc(20 * sizeof(uint8_t));
+//   // // strcpy(str3, "Hello PC\n");
+//   // I2C_init();
+//   // uint64_t j = 0;
+
+//   // while (1)
+//   // {
+//   //   if (I2C_startTransmission(0b11010000))
+//   //     UART_sendStr("started\n");
+//   //   if (I2C_transmit(0))
+//   //     UART_sendStr("transmitted 0\n");
+
+//   //   I2C_stopTransmission();
+//   //   UART_sendStr("stopped\n");
+
+//   //   if (I2C_startTransmission(0b11010000))
+//   //     UART_sendStr("started 2\n");
+//   //   if (I2C_receive(data, 7))
+//   //     UART_sendStr("received\n");
+
+//   //   I2C_stopTransmission();
+//   //   for (uint8_t i = 0; i < 7; i++)
+//   //   {
+//   //     sprintf(str3, "Register: %d = %d\r\n", i, data[i]);
+//   //     UART_sendStr(str3);
+//   //   }
+//   //   // if (a)
+//   //   //   PORTD &= ~(1 << PD7);
+//   //   // else
+//   //   //   PORTD |= 1 << PD7;
+//   //   // a = !a;
+//   //   // sprintf(str3, "%d\r\n", j++);
+//   //   // for (uint8_t i = 0; str3[i] != 0; i++)
+//   //   // {
+//   //   //   UART_sendByte(str3[i]);
+//   //   // }
+//   //   _delay_ms(1000);
+//   // }
+// }
+// // uint8_t a = 0;
+uint8_t j = 0;
+char inputBuffer[0X200];
 ISR(USART_RX_vect)
 {
-  uint8_t dummy = UDR0;
+  cli();
+
+  static uint16_t index = 0;
+  // str[0][index++] = UDR0;
+  inputBuffer[index] = UDR0;
+  if (!inputBuffer[index])
+  {
+    for (j = 0; j <= index; j++)
+      UART_sendByte(inputBuffer[j], NULL);
+    // UART_sendStr(inputBuffer, index);
+    LCD_printStr((char *)"h", setCo(0, 1));
+    index = 0;
+  }
+  index++;
+  if (index > 0X200)
+    index = 0;
+  sei();
 }
 // {
 //   // if (a)
@@ -356,7 +397,7 @@ ISR(USART_RX_vect)
 //     break;
 //   }
 // }
-uint8_t slaRW;
+// uint8_t slaRW;
 
 // ISR(TWI_vect)
 // {

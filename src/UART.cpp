@@ -1,9 +1,9 @@
 #include "UART.h"
 
-FILE uart_io;
-
 void UART_init()
 {
+    FILE uart_io;
+
     // USART initialization
     // Communication Parameters: 8 Data, 1 Stop, No Parity
     // USART Receiver: On
@@ -12,7 +12,7 @@ void UART_init()
     // USART Baud Rate: 38400 (Double Speed Mode)
     UCSR0A = (1 << U2X0);
     UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0) | (0 << TXCIE0);
-    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00) | (1 << UPM01);
     UBRR0H = 0;
     UBRR0L = 51;
     uart_io.put = UART_sendByte;
@@ -30,9 +30,14 @@ void UART_init()
 // {
 //     UART_sendByte((uint8_t)byte);
 // }
-void UART_sendStr(char *str)
+int UART_sendStr(char *str, int size)
 {
-    printf(str);
+    // printf(str);
+    for (uint8_t i = 0; i < size; i++)
+    {
+        UART_sendByte(*(str + i), NULL);
+    }
+    return 1;
 }
 // uint8_t UART_ReceiveByte()
 // {
@@ -46,6 +51,7 @@ int UART_sendByte(char byte, FILE *stream)
     if (byte == '\n')
     {
         UART_sendByte('\r', stream);
+        UART_sendByte('\n', stream);
     }
     while (!(UCSR0A & (1 << UDRE0)))
         ;

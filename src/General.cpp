@@ -44,3 +44,14 @@ void blink(uint8_t time)
   _delay_ms(time);
   PORTB &= ~(1);
 }
+void delay_ms_noINT(double ms)
+{
+  cli();
+  _delay_ms(ms);
+  // sei();
+}
+void delay_ms_INT(double ms)
+{
+  sei();
+  _delay_ms(ms);
+}

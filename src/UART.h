@@ -8,7 +8,7 @@ extern void UART_init();
 
 // extern void UART_sendByte(char byte);
 
-extern void UART_sendStr(char *str);
+extern int UART_sendStr(char *str,int size);
 
 // extern uint8_t USART_ReceiveByte();
 

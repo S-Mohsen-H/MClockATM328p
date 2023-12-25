@@ -11,6 +11,7 @@
 #include "LCD.h"
 #include "UART.h"
 #include "RTC.h"
+#include "avr/interrupt.h"
 #define setCo(x, y) (y ? 0xC0 + x : 0x80 + x)
 #define byte_t uint8_t
 // void * operator new(size_t size);
@@ -22,5 +23,7 @@ extern uint8_t reverseBits(uint8_t num);
 
 extern void blink(uint8_t time);
 
+extern void delay_ms_noINT(double ms);
+extern void delay_ms_INT(double ms);
 
 #endif
