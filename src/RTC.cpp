@@ -9,27 +9,27 @@ void RTC_setTime(uint8_t second,
                  uint8_t year)
 {
     I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
-    I2C_transmit(0);
-    I2C_transmit(second);
-    I2C_transmit(minute);
-    I2C_transmit(hour);
-    I2C_transmit(weekDay);
-    I2C_transmit(monthDay);
-    I2C_transmit(month);
-    I2C_transmit(year);
+    I2C_writeByte(0);
+    I2C_writeByte(second);
+    I2C_writeByte(minute);
+    I2C_writeByte(hour);
+    I2C_writeByte(weekDay);
+    I2C_writeByte(monthDay);
+    I2C_writeByte(month);
+    I2C_writeByte(year);
     I2C_stopTransmission();
 }
 void RTC_getTime(uint8_t *data)
 {
     I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
-    I2C_transmit(0);
+    I2C_writeByte(0);
     I2C_stopTransmission();
     I2C_startTransmission(RTC_ADDRESS, TW_READ);
     for (uint8_t i = 0; i < 6; i++)
     {
-        I2C_receive(data + i, 1);
+        I2C_readByte(data + i, 1);
     }
-    I2C_receive(data + 6, 0);
+    I2C_readByte(data + 6, 0);
     I2C_stopTransmission();
 }
 void RTC_printTime(uint8_t *data)

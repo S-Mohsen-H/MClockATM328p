@@ -15,43 +15,43 @@ void UART_init()
     UCSR0C = (1 << UCSZ01) | (1 << UCSZ00) | (1 << UPM01);
     UBRR0H = 0;
     UBRR0L = 51;
-    uart_io.put = UART_sendByte;
-    uart_io.get = UART_ReceiveByte;
+    uart_io.put = UART_writeByte;
+    uart_io.get = UART_readByte;
     uart_io.flags = _FDEV_SETUP_RW;
     stdout = stdin = &uart_io;
 }
-// void UART_sendByte(uint8_t byte)
+// void UART_writeByte(uint8_t byte)
 // {
 //     while (!(UCSR0A & (1 << UDRE0)))
 //         ;
 //     UDR0 = byte;
 // }
-// void UART_sendByte(char byte)
+// void UART_writeByte(char byte)
 // {
-//     UART_sendByte((uint8_t)byte);
+//     UART_writeByte((uint8_t)byte);
 // }
-int UART_sendStr(char *str, int size)
+int UART_writeStr(char *str, int size)
 {
     // printf(str);
     for (uint8_t i = 0; i < size; i++)
     {
-        UART_sendByte(*(str + i), NULL);
+        UART_writeByte(*(str + i), NULL);
     }
     return 1;
 }
-// uint8_t UART_ReceiveByte()
+// uint8_t UART_readByte()
 // {
 //     while (!(UCSR0A & (1 << RXC0)))
 //         ;
 //     return UDR0;
 // }
-int UART_ReceiveByte(FILE *stream);
-int UART_sendByte(char byte, FILE *stream)
+int UART_readByte(FILE *stream);
+int UART_writeByte(char byte, FILE *stream)
 {
     if (byte == '\n')
     {
-        UART_sendByte('\r', stream);
-        UART_sendByte('\n', stream);
+        UART_writeByte('\r', stream);
+        UART_writeByte('\n', stream);
     }
     while (!(UCSR0A & (1 << UDRE0)))
         ;
@@ -59,7 +59,7 @@ int UART_sendByte(char byte, FILE *stream)
     return 1;
 }
 
-int UART_ReceiveByte(FILE *stream)
+int UART_readByte(FILE *stream)
 {
     while (!(UCSR0A & (1 << RXC0)))
         ;

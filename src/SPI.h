@@ -8,7 +8,7 @@
 #define SR_SER PB3   // 14 -> D11
 #define SR_SRCLK PB5 // 11 -> D13
 
-extern void SPI_sendByte(uint8_t value);
+extern void SPI_writeByte(uint8_t value);
 
 extern void SPI_init();
 

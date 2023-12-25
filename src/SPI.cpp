@@ -7,7 +7,7 @@ void SPI_init()
   //  Enable SPI, change data order and set to master mode
   SPCR = (1 << SPE) | (1 << DORD) | (1 << MSTR);
 }
-void SPI_sendByte(uint8_t value)
+void SPI_writeByte(uint8_t value)
 {
   // _delay_ms(1);
   PORTB &= ~(1 << SR_SRCLR); // clear register

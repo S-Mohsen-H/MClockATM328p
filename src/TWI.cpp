@@ -27,7 +27,7 @@ uint8_t I2C_startTransmission(uint8_t SLA, uint8_t Rw)
   else
     return 0;
 }
-uint8_t I2C_transmit(uint8_t byte)
+uint8_t I2C_writeByte(uint8_t byte)
 {
   TWDR = byte;
   TWCR |= 1 << TWINT | _BV(TWEN);
@@ -38,16 +38,16 @@ uint8_t I2C_transmit(uint8_t byte)
   else
     return 0;
 }
-uint8_t I2C_transmitString(char *str)
+uint8_t I2C_writeStr(char *str)
 {
   while (*str)
   {
-    I2C_transmit(*str);
+    I2C_writeByte(*str);
     str++;
   }
-  I2C_transmit('\0');
+  I2C_writeByte('\0');
 }
-uint8_t I2C_receive(uint8_t *dataBuf, uint8_t ack)
+uint8_t I2C_readByte(uint8_t *dataBuf, uint8_t ack)
 {
   if (ack)
   {
