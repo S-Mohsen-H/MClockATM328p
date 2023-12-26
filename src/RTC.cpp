@@ -19,6 +19,10 @@ void RTC_setTime(uint8_t second,
     I2C_writeByte(year);
     I2C_stopTransmission();
 }
+void RTC_setTime(time_t time)
+{
+    RTC_setTime(time.second, time.minute, time.hour, time.weekDay, time.monthDay, time.month, time.year);
+}
 void RTC_getTime(uint8_t *data)
 {
     I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
@@ -34,7 +38,7 @@ void RTC_getTime(uint8_t *data)
 }
 void RTC_printTime(uint8_t *data)
 {
-    char *dow = "DAY";
+    char *dow = (char *)"DAY";
     switch (*(data + DS1307_WEEKDAY))
     {
     case 0:

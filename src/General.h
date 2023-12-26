@@ -12,6 +12,25 @@
 #include "UART.h"
 #include "RTC.h"
 #include "avr/interrupt.h"
+#include "avr/sleep.h"
+
+typedef enum {
+    WL_NO_SHIELD        = 255,   // for compatibility with WiFi Shield library
+    WL_IDLE_STATUS      = 0,
+    WL_NO_SSID_AVAIL    = 1,
+    WL_SCAN_COMPLETED   = 2,
+    WL_CONNECTED        = 3,
+    WL_CONNECT_FAILED   = 4,
+    WL_CONNECTION_LOST  = 5,
+    WL_DISCONNECTED     = 6
+} wl_status_t;
+
+#define LED_BLUE PB0
+#define LED_YELLOW PC2
+#define SW1 PD7 // PCINT23
+#define SW2 PD5 // PCINT21
+#define SW3 PD6 // PCINT22
+
 #define setCo(x, y) (y ? 0xC0 + x : 0x80 + x)
 #define byte_t uint8_t
 // void * operator new(size_t size);
@@ -23,7 +42,7 @@ extern uint8_t reverseBits(uint8_t num);
 
 extern void blink(uint8_t time);
 
-extern void delay_ms_noINT(double ms);
-extern void delay_ms_INT(double ms);
+// extern void delay_ms_noINT(double ms);
+// extern void delay_ms_INT(double ms);
 
 #endif

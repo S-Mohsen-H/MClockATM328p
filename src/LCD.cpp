@@ -13,6 +13,11 @@ void LCD_writeStr(char *str, uint8_t coordination)
     str++;
   }
 }
+void LCD_writeStr(char *str, uint8_t x, uint8_t y)
+{
+  LCD_writeStr(str, setCo(x, y));
+}
+
 void LCD_init(void)
 {
   _delay_ms(1000);

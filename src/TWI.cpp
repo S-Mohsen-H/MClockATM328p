@@ -4,7 +4,8 @@
 
 void I2C_init()
 {
-  TWBR = 72;
+  // F_CPU = 100000 * (16 + 2 * TWBR);
+  TWBR = (F_CPU - 1600000) / 200000;
   TWSR = 0;
   TWCR = 1 << TWEA | 1 << TWEN | 1 << TWIE;
 }
@@ -42,10 +43,11 @@ uint8_t I2C_writeStr(char *str)
 {
   while (*str)
   {
-    I2C_writeByte(*str);
+    if (!I2C_writeByte(*str))
+      return 0;
     str++;
   }
-  I2C_writeByte('\0');
+  return I2C_writeByte('\0');
 }
 uint8_t I2C_readByte(uint8_t *dataBuf, uint8_t ack)
 {

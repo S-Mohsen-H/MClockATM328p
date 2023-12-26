@@ -1,3 +1,4 @@
+
 #include "General.h"
 
 alarm_t alarm1;
@@ -6,6 +7,7 @@ char outputBuffer[0X100];
 // char *inputBuffer = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 uint8_t inputBufferIndex = 0;
 char str[2][17];
+uint8_t buttonStates = 0;
 // int main(void)
 // {
 //   UART_init();
@@ -48,7 +50,10 @@ char str[2][17];
 // }
 int main(void)
 {
-
+  DDRD = 0;
+  PORTD = 1 << SW1 | 1 << SW2 | 1 << SW3;
+  DDRC = 1 << LED_YELLOW;
+  DDRB = 1 << LED_BLUE;
   sei();
   UART_init();
   SPI_init();
@@ -58,28 +63,40 @@ int main(void)
   LCD_init();
   LCD_writeByte(COMMAND_CLEAR, COMMAND);
   LCD_writeStr((char *)"hello", setCo(0, 0));
-  LCD_writeStr((char *)"line 2  fffhfff", setCo(0, 1));
+  LCD_writeStr((char *)"line 2  ff1hfff", setCo(0, 1));
 
   I2C_init();
-
   uint8_t data[1000];
   char str[17];
   uint8_t i = 0;
   uint8_t j = 0;
+  // PCMSK2 = 1 << PCINT23;
+  // PCICR = 1 << PCIE2;
   I2C_startTransmission(0b1001001, TW_WRITE);
-  I2C_writeByte(0xA2);
+  I2C_writeByte(0xA1);
   I2C_stopTransmission();
+  // DDRC |= 1 << LED_YELLOW;
+  // DDRB |= 1 << LED_BLUE;
+  // DDRC &= ~(1 << LED_YELLOW);
+  // DDRB &= ~(1 << LED_BLUE);
   // RTC_setTime(binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5), binToBcd(5));
   while (1)
   {
-
+    // if (!(PIND & (1 << SW1)))
+    // {
+    //   DDRC |= 1 << LED_YELLOW;
+    //   DDRB |= 1 << LED_BLUE;
+    // }
+    // else
+    // {
+    //   DDRC &= ~(1 << LED_YELLOW);
+    //   DDRB &= ~(1 << LED_BLUE);
+    // }
     sprintf(str, "%d", i++);
     LCD_writeStr(str, setCo(2, 0));
     // LCD_writeStr(str, setCo(0, 0));
     // I2C_startTransmission(0b1001001, TW_READ);
-
     I2C_startTransmission(0b1001001, TW_READ);
-    // printf("c\n");
     j = 0;
     for (j = 0; j < 31; j++)
       I2C_readByte(data + j, 1);
@@ -175,26 +192,26 @@ int main(void)
 // // uint8_t a = 0;
 uint8_t j = 0;
 char inputBuffer[0X200];
-ISR(USART_RX_vect)
-{
-  cli();
+// ISR(USART_RX_vect)
+// {
+//   cli();
 
-  static uint16_t index = 0;
-  // str[0][index++] = UDR0;
-  inputBuffer[index] = UDR0;
-  if (!inputBuffer[index])
-  {
-    for (j = 0; j <= index; j++)
-      UART_writeByte(inputBuffer[j], NULL);
-    // UART_writeStr(inputBuffer, index);
-    LCD_writeStr((char *)"h", setCo(0, 1));
-    index = 0;
-  }
-  index++;
-  if (index > 0X200)
-    index = 0;
-  sei();
-}
+//   static uint16_t index = 0;
+//   // str[0][index++] = UDR0;
+//   inputBuffer[index] = UDR0;
+//   if (!inputBuffer[index])
+//   {
+//     for (j = 0; j <= index; j++)
+//       UART_writeByte(inputBuffer[j], NULL);
+//     // UART_writeStr(inputBuffer, index);
+//     LCD_writeStr((char *)"h", setCo(0, 1));
+//     index = 0;
+//   }
+//   index++;
+//   if (index > 0X200)
+//     index = 0;
+//   sei();
+// }
 // {
 //   // if (a)
 //   //   PORTD &= ~(1 << PD7);
@@ -584,3 +601,12 @@ ISR(USART_RX_vect)
 //     break;
 //   }
 // }
+
+ISR(PCINT2_vect)
+{
+  static uint8_t f = 0;
+  char strn[2];
+  sprintf(strn, "%d", f);
+  LCD_writeStr(strn, setCo(0, 7));
+  f = !f;
+}
