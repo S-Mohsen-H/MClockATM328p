@@ -12,9 +12,11 @@
 
 #define DATA 1
 #define COMMAND 0
+#define LCD_CLEAR() LCD_writeByte(COMMAND_CLEAR, COMMAND);
 
 extern void LCD_writeStr(char *str, uint8_t coordination);
 extern void LCD_writeByte(uint8_t command, uint8_t DATcom);
 extern void LCD_init(void);
 extern void LCD_writeStr(char *str, uint8_t x, uint8_t y);
+extern void LCD_writeStr(uint8_t x, uint8_t y, const char *fmt, ...);
 #endif

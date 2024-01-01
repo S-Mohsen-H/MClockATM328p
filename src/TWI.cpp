@@ -5,7 +5,7 @@
 void I2C_init()
 {
   // F_CPU = 100000 * (16 + 2 * TWBR);
-  TWBR = (F_CPU - 1600000) / 200000;
+  TWBR = (cpuF - 1600000) / 200000;
   TWSR = 0;
   TWCR = 1 << TWEA | 1 << TWEN | 1 << TWIE;
 }
@@ -57,9 +57,9 @@ uint8_t I2C_readByte(uint8_t *dataBuf, uint8_t ack)
     while (!(TWCR & (1 << TWINT)))
       ;
     if (TW_STATUS == TW_MR_DATA_ACK)
-      *dataBuf = TWDR;
+      *dataBuf = 5;
     else
-      return 0;
+      return TWDR;
   }
   else
   {
@@ -67,9 +67,9 @@ uint8_t I2C_readByte(uint8_t *dataBuf, uint8_t ack)
     while (!(TWCR & (1 << TWINT)))
       ;
     if (TW_STATUS == TW_MR_DATA_NACK)
-      *dataBuf = TWDR;
+      *dataBuf = 5;
     else
-      return 0;
+      return TWDR;
   }
   return 1;
   // for (uint8_t i = 0; i < size - 2; i++)

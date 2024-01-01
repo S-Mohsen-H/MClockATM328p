@@ -1,4 +1,5 @@
 #include "UART.h"
+#ifdef __AVR_ATmega328P__
 
 void UART_init()
 {
@@ -65,3 +66,5 @@ int UART_readByte(FILE *stream)
         ;
     return UDR0;
 }
+
+#endif

@@ -9,10 +9,17 @@
 //     free(ptr);
 // }
 
+void delay(double ms)
+{
+  if (CLKPR)
+    _delay_ms(ms / (F_CPU / 2000000));
+  else
+    _delay_ms(ms);
+}
 void nothing()
 {
 }
-
+uint64_t cpuF = F_CPU;
 // ISR(USART_RX_vect)
 // {
 // }
@@ -37,21 +44,39 @@ uint8_t reverseBits(uint8_t num)
   //        (num & (1 << 0)) >>
   //     ;
 }
-
+int log2(int num)
+{
+  static uint8_t i = 0;
+  uint8_t j;
+  if (num == 1)
+  {
+    j = i;
+    i = 0;
+    return j;
+  }
+  else
+  {
+    i++;
+    return log2(num / 2);
+  }
+}
+// char *strPtr(const char *str)
+// {
+// }
 void blink(uint8_t time)
 {
   PORTB |= 1;
-  _delay_ms(time);
+  delay(time);
   PORTB &= ~(1);
 }
 void delay_ms_noINT(double ms)
 {
   cli();
-  _delay_ms(ms);
+  delay(ms);
   // sei();
 }
 void delay_ms_INT(double ms)
 {
   sei();
-  _delay_ms(ms);
+  delay(ms);
 }

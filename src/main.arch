@@ -35,7 +35,7 @@ uint8_t buttonStates = 0;
 //     LCD_writeStr(strn, setCo(10, 0));
 //     sei();
 
-//     _delay_ms(2000);
+//     delay(2000);
 
 //     cli();
 //     LCD_writeByte(COMMAND_CLEAR, COMMAND);
@@ -59,7 +59,7 @@ int main(void)
   SPI_init();
   SPI_writeByte(0);
 
-  _delay_ms(1000);
+  delay(1000);
   LCD_init();
   LCD_writeByte(COMMAND_CLEAR, COMMAND);
   LCD_writeStr((char *)"hello", setCo(0, 0));
@@ -106,10 +106,10 @@ int main(void)
     I2C_stopTransmission();
     // printf((char *)data);
     LCD_writeStr((char *)data, setCo(0, 1));
-    _delay_ms(1000);
+    delay(1000);
   }
 }
-//   // _delay_ms(15);
+//   // delay(15);
 //   // while (1)
 //   // {
 //   //   // if (I2C_startTransmission(0b11010000))
@@ -126,7 +126,7 @@ int main(void)
 //   //   I2C_stopTransmission();
 
 //   //   printf("%d\n", data[0]);
-//   //   _delay_ms(1000);
+//   //   delay(1000);
 //   //   // if (I2C_readByte(data, 7))
 //   //   //   LCD_writeStr((char *)"2", setCo(1, 0));
 //   //   // char *str2 = NULL;
@@ -144,7 +144,7 @@ int main(void)
 //   //   // LCD_writeByte(COMMAND_CLEAR, COMMAND);
 //   //   // LCD_writeStr(str, setCo(0, 0));
 
-//   //   // _delay_ms(1000);
+//   //   // delay(1000);
 //   // }
 //   // DDRD = 1 << PD7;
 //   // UART_init();
@@ -186,7 +186,7 @@ int main(void)
 //   //   // {
 //   //   //   UART_writeByte(str3[i]);
 //   //   // }
-//   //   _delay_ms(1000);
+//   //   delay(1000);
 //   // }
 // }
 // // uint8_t a = 0;
@@ -610,3 +610,44 @@ ISR(PCINT2_vect)
   LCD_writeStr(strn, setCo(0, 7));
   f = !f;
 }
+// #include "General.h"
+// int main(void)
+// {
+//   // CLKPR = 0;
+//   // // CLKPR = 1 << CLKPCE;
+//   // CLKPR |= log2(F_CPU / 1000000);
+//   // CLKPR = 1 << CLKPCE;
+//   delay(1);
+//   SPI_init();
+//   SPI_writeByte(0);
+//   delay(1000);
+//   LCD_init();
+//   LCD_writeByte(COMMAND_CLEAR, COMMAND);
+//   LCD_writeStr((char *)"hello", setCo(0, 0));
+
+//   // I2C_init();
+//   uint8_t f = 0;
+//   uint8_t g = 0;
+//   // uint8_t cl;
+//   while (1)
+//   {
+//     if (++f == 2)
+//     {
+//       f = 0;
+//       g = !g;
+//       // cl = log2(F_CPU / 1000000);
+//       if (g)
+//         clock_prescale_set((clock_div_t)log2(F_CPU / 1000000));
+//       else
+//         clock_prescale_set(clock_div_1);
+//     }
+//     delay(1000);
+//     LCD_writeByte(COMMAND_CLEAR, COMMAND);
+//     // // LCD_writeStr("111", 0, 0);
+//     LCD_writeStr(0, 0, "%d", log2(16));
+//     delay(1000);
+//     LCD_writeByte(COMMAND_CLEAR, COMMAND);
+//     LCD_writeStr(0, 1, "%x", CLKPR);
+//     /* code */
+//   }
+// }

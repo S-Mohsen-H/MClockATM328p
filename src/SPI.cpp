@@ -9,7 +9,7 @@ void SPI_init()
 }
 void SPI_writeByte(uint8_t value)
 {
-  // _delay_ms(1);
+  // delay(1);
   PORTB &= ~(1 << SR_SRCLR); // clear register
   PORTB |= (1 << SR_SRCLR);  // register can take data
 

@@ -23,7 +23,8 @@ typedef struct
     uint8_t weekDay;
     uint8_t monthDay;
     uint8_t month;
-    uint16_t year;
+    uint16_t year16;
+    uint8_t year;
 } time_t;
 
 extern void RTC_setTime(uint8_t second,
@@ -35,6 +36,8 @@ extern void RTC_setTime(uint8_t second,
                         uint8_t year);
 extern void RTC_setTime(time_t time);
 extern void RTC_getTime(uint8_t *data);
+extern void readTime(time_t *time, uint8_t sla);
+extern void readTime2(uint8_t *timeArr, uint8_t sla);
 
 extern void RTC_printTime(uint8_t *data);
 #endif

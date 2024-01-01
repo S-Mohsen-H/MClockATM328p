@@ -1,5 +1,7 @@
 #include "RTC.h"
 #include "General.h"
+#ifdef __AVR_ATmega328P__
+
 void RTC_setTime(uint8_t second,
                  uint8_t minute,
                  uint8_t hour,
@@ -35,6 +37,117 @@ void RTC_getTime(uint8_t *data)
     }
     I2C_readByte(data + 6, 0);
     I2C_stopTransmission();
+}
+// void readTime(time_t *time, uint8_t sla)
+// {
+//     if (sla == RTC_ADDRESS)
+//     {
+//         I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
+//         I2C_writeByte(0);
+//         I2C_stopTransmission();
+//         I2C_startTransmission(RTC_ADDRESS, TW_READ);
+//         I2C_readByte(&(time->second), 1);
+//         I2C_readByte(&(time->minute), 1);
+//         I2C_readByte(&(time->hour), 1);
+//         I2C_readByte(&(time->weekDay), 1);
+//         I2C_readByte(&(time->monthDay), 1);
+//         I2C_readByte(&(time->month), 1);
+//         I2C_readByte(&(time->year), 0);
+//         I2C_stopTransmission();
+//     }
+//     else if (sla == ESP32_SLA)
+//     {
+//         I2C_startTransmission(ESP32_SLA, TW_WRITE);
+//         I2C_writeByte(0xA1);
+//         I2C_stopTransmission();
+//         I2C_startTransmission(ESP32_SLA, TW_READ);
+//         I2C_readByte(&(time->second), 1);
+//         I2C_readByte(&(time->minute), 1);
+//         I2C_readByte(&(time->hour), 1);
+//         I2C_readByte(&(time->weekDay), 1);
+//         I2C_readByte(&(time->monthDay), 1);
+//         I2C_readByte(&(time->month), 1);
+//         I2C_readByte(&(time->year), 0);
+//         I2C_stopTransmission();
+//     }
+// }
+void readTime2(uint8_t *timeArr, uint8_t sla)
+{
+    if (sla == RTC_ADDRESS)
+    {
+        I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
+        I2C_writeByte(0);
+        I2C_stopTransmission();
+        I2C_startTransmission(RTC_ADDRESS, TW_READ);
+        I2C_readByte(&(timeArr[0]), 1);
+        I2C_readByte(&(timeArr[1]), 1);
+        I2C_readByte(&(timeArr[2]), 1);
+        I2C_readByte(&(timeArr[3]), 1);
+        I2C_readByte(&(timeArr[4]), 1);
+        I2C_readByte(&(timeArr[5]), 1);
+        I2C_readByte(&(timeArr[6]), 0);
+        I2C_stopTransmission();
+    }
+    else if (sla == ESP32_SLA)
+    {
+        I2C_startTransmission(ESP32_SLA, TW_WRITE);
+        I2C_writeByte(0xA3);
+        I2C_stopTransmission();
+        I2C_startTransmission(ESP32_SLA, TW_READ);
+        I2C_readByte(&(timeArr[0]), 1);
+        I2C_readByte(&(timeArr[1]), 1);
+        I2C_readByte(&(timeArr[2]), 1);
+        I2C_readByte(&(timeArr[3]), 1);
+        I2C_readByte(&(timeArr[4]), 1);
+        I2C_readByte(&(timeArr[5]), 1);
+        I2C_readByte(&(timeArr[6]), 0);
+        // I2C_readByte(timeArr + 0, 1);
+        // I2C_readByte(timeArr + 1, 1);
+        // I2C_readByte(timeArr + 2, 1);
+        // I2C_readByte(timeArr + 3, 1);
+        // I2C_readByte(timeArr + 4, 1);
+        // I2C_readByte(timeArr + 5, 1);
+        // I2C_readByte(timeArr + 6, 0);
+        I2C_stopTransmission();
+        // I2C_startTransmission(ESP32_SLA, TW_WRITE);
+        // I2C_writeByte(2);
+        // I2C_stopTransmission();
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // for (uint8_t i = 0; i < 100; i++)
+        // {
+        //     I2C_readByte(timeArr + i, 1);
+        //     if (timeArr[i] == 0)
+        //     {
+        //         I2C_readByte(timeArr + i + 1, 0);
+        //         break;
+        //     }
+        // }
+        // I2C_stopTransmission();
+
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // I2C_readByte(&(timeArr[1]), 0);
+        // I2C_stopTransmission();
+
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // I2C_readByte(&(timeArr[2]), 0);
+        // I2C_stopTransmission();
+
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // I2C_readByte(&(timeArr[3]), 0);
+        // I2C_stopTransmission();
+
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // I2C_readByte(&(timeArr[4]), 0);
+        // I2C_stopTransmission();
+
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // I2C_readByte(&(timeArr[5]), 0);
+        // I2C_stopTransmission();
+
+        // I2C_startTransmission(ESP32_SLA, TW_READ);
+        // I2C_readByte(&(timeArr[6]), 0);
+        // I2C_stopTransmission();
+    }
 }
 void RTC_printTime(uint8_t *data)
 {
@@ -76,3 +189,4 @@ void RTC_printTime(uint8_t *data)
     // free(dow);
     // printf("hehvvvve\r");
 }
+#endif
