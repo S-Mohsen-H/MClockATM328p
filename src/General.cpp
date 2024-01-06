@@ -8,6 +8,9 @@
 // {
 //     free(ptr);
 // }
+uint64_t clockMS;
+uint32_t clockS;
+// uint16_t nowMS;
 
 void delay(double ms)
 {

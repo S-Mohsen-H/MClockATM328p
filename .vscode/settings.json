@@ -1,6 +1,8 @@
 {
     "cmake.configureOnOpen": false,
     "files.associations": {
-        "*.arch": "cpp"
-    }
+        "*.arch": "cpp",
+        "mainarch2": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

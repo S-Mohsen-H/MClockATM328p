@@ -1,60 +1,96 @@
 #include "RTC.h"
 #include "General.h"
 #ifdef __AVR_ATmega328P__
-
-void RTC_setTime(uint8_t second,
-                 uint8_t minute,
-                 uint8_t hour,
-                 uint8_t weekDay,
-                 uint8_t monthDay,
-                 uint8_t month,
-                 uint8_t year)
+#define if_I2C_startTransmission(X, Y)    \
+    do                                    \
+    {                                     \
+        if (!I2C_startTransmission(X, Y)) \
+            return 0;                     \
+    } while (0);
+#define if_I2C_writeByte(X)    \
+    do                         \
+    {                          \
+        if (!I2C_writeByte(X)) \
+            return 0;          \
+    } while (0);
+#define if_I2C_readByte(X, Y)    \
+    do                           \
+    {                            \
+        if (!I2C_readByte(X, Y)) \
+            return 0;            \
+    } while (0);
+#define if_I2C_stopTransmission()    \
+    do                               \
+    {                                \
+        if (!I2C_stopTransmission()) \
+            return 0;                \
+    } while (0);
+uint8_t RTC_setTime(uint8_t second,
+                    uint8_t minute,
+                    uint8_t hour,
+                    uint8_t weekDay,
+                    uint8_t monthDay,
+                    uint8_t month,
+                    uint8_t year)
 {
-    I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
-    I2C_writeByte(0);
-    I2C_writeByte(second);
-    I2C_writeByte(minute);
-    I2C_writeByte(hour);
-    I2C_writeByte(weekDay);
-    I2C_writeByte(monthDay);
-    I2C_writeByte(month);
-    I2C_writeByte(year);
-    I2C_stopTransmission();
+    if_I2C_startTransmission(DS1307_ADDRESS, TW_WRITE);
+    if_I2C_writeByte(0);
+    if_I2C_writeByte(second);
+    if_I2C_writeByte(minute);
+    if_I2C_writeByte(hour);
+    if_I2C_writeByte(weekDay);
+    if_I2C_writeByte(monthDay);
+    if_I2C_writeByte(month);
+    if_I2C_writeByte(year);
+    return (I2C_stopTransmission());
 }
-void RTC_setTime(time_t time)
+uint8_t RTC_setTime(time_t time)
 {
-    RTC_setTime(time.second, time.minute, time.hour, time.weekDay, time.monthDay, time.month, time.year);
+    return (RTC_setTime(time.second, time.minute, time.hour, time.weekDay, time.monthDay, time.month, time.year));
 }
-void RTC_getTime(uint8_t *data)
+uint8_t RTC_getTime(uint8_t *data)
 {
-    I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
-    I2C_writeByte(0);
-    I2C_stopTransmission();
-    I2C_startTransmission(RTC_ADDRESS, TW_READ);
+    if_I2C_startTransmission(DS1307_ADDRESS, TW_WRITE);
+    if_I2C_writeByte(0);
+    if_I2C_stopTransmission();
+    if_I2C_startTransmission(DS1307_ADDRESS, TW_READ);
     for (uint8_t i = 0; i < 6; i++)
-    {
-        I2C_readByte(data + i, 1);
-    }
-    I2C_readByte(data + 6, 0);
-    I2C_stopTransmission();
+        if_I2C_readByte(data + i, 1);
+    if_I2C_readByte(data + 6, 0);
+    if_I2C_stopTransmission();
+}
+uint8_t RTC_getTime(time_t *pTime)
+{
+    if_I2C_startTransmission(DS1307_ADDRESS, TW_WRITE);
+    if_I2C_writeByte(0);
+    if_I2C_stopTransmission();
+    if_I2C_startTransmission(DS1307_ADDRESS, TW_READ);
+    if_I2C_readByte(&(pTime->second), 1);
+    if_I2C_readByte(&(pTime->minute), 1);
+    if_I2C_readByte(&(pTime->hour), 1);
+    if_I2C_readByte(&(pTime->weekDay), 1);
+    if_I2C_readByte(&(pTime->monthDay), 1);
+    if_I2C_readByte(&(pTime->month), 1);
+    if_I2C_readByte(&(pTime->year), 0);
+    return (I2C_stopTransmission());
 }
 // void readTime(time_t *time, uint8_t sla)
 // {
-//     if (sla == RTC_ADDRESS)
-//     {
-//         I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
-//         I2C_writeByte(0);
-//         I2C_stopTransmission();
-//         I2C_startTransmission(RTC_ADDRESS, TW_READ);
-//         I2C_readByte(&(time->second), 1);
-//         I2C_readByte(&(time->minute), 1);
-//         I2C_readByte(&(time->hour), 1);
-//         I2C_readByte(&(time->weekDay), 1);
-//         I2C_readByte(&(time->monthDay), 1);
-//         I2C_readByte(&(time->month), 1);
-//         I2C_readByte(&(time->year), 0);
-//         I2C_stopTransmission();
-//     }
+//     if (sla == DS1307_ADDRESS)
+// {
+//     I2C_startTransmission(DS1307_ADDRESS, TW_WRITE);
+//     I2C_writeByte(0);
+//     I2C_stopTransmission();
+//     I2C_startTransmission(DS1307_ADDRESS, TW_READ);
+//     I2C_readByte(&(time->second), 1);
+//     I2C_readByte(&(time->minute), 1);
+//     I2C_readByte(&(time->hour), 1);
+//     I2C_readByte(&(time->weekDay), 1);
+//     I2C_readByte(&(time->monthDay), 1);
+//     I2C_readByte(&(time->month), 1);
+//     I2C_readByte(&(time->year), 0);
+//     I2C_stopTransmission();
+// }
 //     else if (sla == ESP32_SLA)
 //     {
 //         I2C_startTransmission(ESP32_SLA, TW_WRITE);
@@ -73,12 +109,12 @@ void RTC_getTime(uint8_t *data)
 // }
 void readTime2(uint8_t *timeArr, uint8_t sla)
 {
-    if (sla == RTC_ADDRESS)
+    if (sla == DS1307_ADDRESS)
     {
-        I2C_startTransmission(RTC_ADDRESS, TW_WRITE);
+        I2C_startTransmission(DS1307_ADDRESS, TW_WRITE);
         I2C_writeByte(0);
         I2C_stopTransmission();
-        I2C_startTransmission(RTC_ADDRESS, TW_READ);
+        I2C_startTransmission(DS1307_ADDRESS, TW_READ);
         I2C_readByte(&(timeArr[0]), 1);
         I2C_readByte(&(timeArr[1]), 1);
         I2C_readByte(&(timeArr[2]), 1);
@@ -185,8 +221,5 @@ void RTC_printTime(uint8_t *data)
     default:
         break;
     }
-    printf("Date: %s 14%2d/%2d/%2d - Time: %2d:%2d:%2d\r", dow, *(data + DS1307_YEAR), *(data + DS1307_MONTH), *(data + DS1307_MONTHDAY), *(data + DS1307_HOUR), *(data + DS1307_MINUTE), *(data + DS1307_SECOND));
-    // free(dow);
-    // printf("hehvvvve\r");
 }
 #endif

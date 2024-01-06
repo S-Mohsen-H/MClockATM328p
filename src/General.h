@@ -12,9 +12,9 @@
 #include "avr/sleep.h"
 #include "SPI.h"
 #include "LCD.h"
-
+#include "ESP.h"
 #ifdef __AVR_ATmega328P__
-#include "TWI.h"
+#include "I2C.h"
 #include "UART.h"
 #include "RTC.h"
 #endif
@@ -46,9 +46,14 @@ typedef enum
 #define SW3 PD6 // PCINT22
 
 #define setCo(x, y) (y ? 0xC0 + x : 0x80 + x)
-#define byte_t uint8_t
+#define LCD_setCo(x, y) LCD_writeByte(y ? 0xC0 + x : 0x80 + x, COMMAND)
 
-#define F_CPU__ 2000000
+#define ESP32_SLA 0b1001001
+
+typedef uint8_t byte_t;
+uint8_t eReg;
+#define ERROR_I2C 1
+// #define F_CPU__ 2000000
 // void * operator new(size_t size);
 // void operator delete(void * ptr);
 extern void nothing();
@@ -61,7 +66,12 @@ extern void blink(uint8_t time);
 
 // extern void delay_ms_noINT(double ms);
 // extern void delay_ms_INT(double ms);
-// extern 
+// extern
 extern int log2(int num);
 extern char *strPtr(char *str);
+extern uint64_t clockMS;
+extern uint32_t clockS;
+
+// extern uint16_t nowMS;
+
 #endif

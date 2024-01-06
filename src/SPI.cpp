@@ -9,16 +9,14 @@ void SPI_init()
 }
 void SPI_writeByte(uint8_t value)
 {
-  // delay(1);
-  PORTB &= ~(1 << SR_SRCLR); // clear register
-  PORTB |= (1 << SR_SRCLR);  // register can take data
 
-  // SPI Data Register – SPDR
+  // PORTB &= ~(1 << SR_SRCLR);
+  // PORTB |= (1 << SR_SRCLR);
+
   SPDR = value; // write byte
   while (!(SPSR & (1 << SPIF)))
-    ; // wait for end of transmission
+    ;
 
-  PORTB &= ~(1 << SR_RCLK); // register clock low
-  PORTB |= (1 << SR_RCLK);  // register clock high
-                            //    will write data to output buffers
+  // PORTB &= ~(1 << SR_RCLK);
+  // PORTB |= (1 << SR_RCLK);
 }
